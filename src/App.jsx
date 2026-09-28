@@ -99,7 +99,7 @@ function Certifications() {
       )}
       <div className="grid3">
         {shown.map((c) => (
-          <Tilt key={c.id} className="cert reveal">
+          <Tilt key={c.id} className="cert pop">
             {c.isImage && <img src={c.fileUrl} alt={c.title} loading="lazy" />}
             <span className={`pill ${c.type}`}>{c.type === 'license' ? 'License' : 'Udemy'}</span>
             <h3>{c.title}</h3><p>{c.issuer}</p>

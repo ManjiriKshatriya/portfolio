@@ -47,3 +47,4 @@ footer{text-align:center;padding:30px;color:var(--mut);font-size:.85rem;border-t
 @media(max-width:820px){.burger{display:block}.nav ul{position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;background:rgba(10,11,20,.96);backdrop-filter:blur(14px);max-height:0;overflow:hidden;transition:.35s}
 .nav ul.open{max-height:420px;border-bottom:1px solid var(--bd)}.nav li a{display:block;padding:14px 5vw}.hero{text-align:center}.cta{justify-content:center}.timeline{padding-left:16px}.tl::before{left:-25px}.tabs .add{margin-left:0}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+.pop{animation:up .6s backwards}
