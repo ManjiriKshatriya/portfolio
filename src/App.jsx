@@ -11,10 +11,10 @@ const aboutBadges = [
 
 const skills = {
   'GenAI & Agents': ['LLMs', 'Prompt Engineering', 'RAG', 'Agentic Workflows', 'LangChain', 'LangGraph', 'CrewAI', 'Semantic Kernel', 'Azure OpenAI', 'MCP'],
-  'Languages': ['Python', 'JavaScript', 'C++'],
+  Languages: ['Python', 'JavaScript', 'C++'],
   'Backend & Web': ['FastAPI', 'Flask', 'React.js', 'HTML', 'CSS', 'Bootstrap'],
-  'Data': ['MySQL', 'MongoDB', 'Vector DB', 'Pinecone'],
-  'DevOps': ['Docker', 'Kubernetes', 'CI/CD', 'Git'],
+  Data: ['MySQL', 'MongoDB', 'Vector DB', 'Pinecone'],
+  DevOps: ['Docker', 'Kubernetes', 'CI/CD', 'Git'],
 }
 
 const projects = [
@@ -53,15 +53,27 @@ const projects = [
 ]
 
 const jobs = [
-  { co: 'EY-GDS', role: 'Senior AI Engineer', when: 'May 2026 – Present', pts: [
-    'Architected LangGraph multi-agent systems for SOX scoping, Trial Balance generation, FSLI mapping and RACM creation — cutting manual audit effort by 95% per engagement.',
-    'Built LLM-orchestrated agents parsing Balance Sheet and Income Statement data with 80%+ FSLI mapping coverage.',
-    'Shipped SSO auth, client onboarding and document ingestion pipelines handling 60+ financial statements per run.' ] },
-  { co: 'Persistent Systems Ltd.', role: 'Senior AI Engineer', when: 'Jan 2025 – May 2026', pts: [
-    'PiAssist: Teams-based GenAI assistant for 15,000+ employees; Azure AI Search RAG pipeline with 98% daily query resolution and 90% less navigation time.',
-    'Per-user token rate limiting on GPT-4.1 deployments; JWT-secured leave approval workflow with manager nudges.',
-    'GenAI UI test generator: CrewAI agents turn natural-language requirements into Robot Framework / Playwright scripts.',
-    'ACL Rules Extraction Engine: RAG pipeline over Jira and Teams with a React semantic-search UI.' ] },
+  {
+    co: 'EY-GDS',
+    role: 'Senior AI Engineer',
+    when: 'May 2026 – Present',
+    pts: [
+      'Architected LangGraph multi-agent systems for SOX scoping, Trial Balance generation, FSLI mapping and RACM creation — cutting manual audit effort by 95% per engagement.',
+      'Built LLM-orchestrated agents parsing Balance Sheet and Income Statement data with 80%+ FSLI mapping coverage.',
+      'Shipped SSO auth, client onboarding and document ingestion pipelines handling 60+ financial statements per run.',
+    ],
+  },
+  {
+    co: 'Persistent Systems Ltd.',
+    role: 'Senior AI Engineer',
+    when: 'Jan 2025 – May 2026',
+    pts: [
+      'PiAssist: Teams-based GenAI assistant for 15,000+ employees; Azure AI Search RAG pipeline with 98% daily query resolution and 90% less navigation time.',
+      'Per-user token rate limiting on GPT-4.1 deployments; JWT-secured leave approval workflow with manager nudges.',
+      'GenAI UI test generator: CrewAI agents turn natural-language requirements into Robot Framework / Playwright scripts.',
+      'ACL Rules Extraction Engine: RAG pipeline over Jira and Teams with a React semantic-search UI.',
+    ],
+  },
 ]
 
 const edu = [
@@ -213,7 +225,7 @@ function Certifications() {
     setBusy(false)
     if (!r.ok) return setErr(d.error || 'Failed')
 
-    setCerts(d.certs)
+    setCerts(d.certs || [])
     setF({ title: '', issuer: '', type: 'udemy', link: '', credential: '' })
     setFile(null)
     setOpen(false)
@@ -223,10 +235,10 @@ function Certifications() {
     if (!confirm('Remove this certification?')) return
     const r = await fetch('/api/certs?id=' + id, { method: 'DELETE' })
     const d = await r.json()
-    if (r.ok) setCerts(d.certs)
+    if (r.ok) setCerts(d.certs || [])
   }
 
-  const shown = certs.filter((c) => filter === 'all' || c.type === filter)
+  const shown = (certs || []).filter((c) => filter === 'all' || c.type === filter)
 
   return (
     <section className="section cert-section" id="certifications">
@@ -234,10 +246,17 @@ function Certifications() {
 
       <div className="cert-toolbar">
         <div className="cert-tabs">
-          <button className={`tab ${filter === 'all' ? 'on' : ''}`} type="button" onClick={() => setFilter('all')}>All</button>
-          <button className={`tab ${filter === 'license' ? 'on' : ''}`} type="button" onClick={() => setFilter('license')}>Licenses</button>
-          <button className={`tab ${filter === 'udemy' ? 'on' : ''}`} type="button" onClick={() => setFilter('udemy')}>Udemy</button>
+          <button className={`tab ${filter === 'all' ? 'on' : ''}`} type="button" onClick={() => setFilter('all')}>
+            All
+          </button>
+          <button className={`tab ${filter === 'license' ? 'on' : ''}`} type="button" onClick={() => setFilter('license')}>
+            Licenses
+          </button>
+          <button className={`tab ${filter === 'udemy' ? 'on' : ''}`} type="button" onClick={() => setFilter('udemy')}>
+            Udemy
+          </button>
         </div>
+
         {admin && (
           <button className="tab add" type="button" onClick={() => setOpen((v) => !v)}>
             {open ? 'Close' : '+ Add'}
@@ -270,7 +289,10 @@ function Certifications() {
           return (
             <article className="cert-card" key={cert.id}>
               <div className="cert-thumb">
-                <img src={cert.image || cert.fileUrl || 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80'} alt={cert.title || cert.name} />
+                <img
+                  src={cert.image || cert.fileUrl || 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80'}
+                  alt={cert.title || cert.name}
+                />
               </div>
 
               <div className="cert-body">
@@ -280,17 +302,23 @@ function Certifications() {
 
                 <div className="cert-links">
                   {viewLink && (
-                    <a href={viewLink} target="_blank" rel="noreferrer">View certificate</a>
+                    <a href={viewLink} target="_blank" rel="noreferrer">
+                      View certificate
+                    </a>
                   )}
                   {showCredential && (
-                    <a href={credentialLink} target="_blank" rel="noreferrer">Credential</a>
+                    <a href={credentialLink} target="_blank" rel="noreferrer">
+                      Credential
+                    </a>
                   )}
                 </div>
-              </div>
 
-              {admin && (
-                <button className="del" type="button" onClick={() => remove(cert.id)}>Remove</button>
-              )}
+                {admin && (
+                  <button className="del" type="button" onClick={() => remove(cert.id)}>
+                    Remove
+                  </button>
+                )}
+              </div>
             </article>
           )
         })}
@@ -380,13 +408,21 @@ export default function App() {
       </div>
 
       <nav className={scrolled ? 'nav scrolled' : 'nav'}>
-        <a href="#top" className="logo">MK<b>.</b></a>
+        <a href="#top" className="logo">
+          MK<b>.</b>
+        </a>
+
         <button className="burger" onClick={() => setMenu(!menu)} aria-label="Menu">
           {menu ? '✕' : '☰'}
         </button>
+
         <ul className={menu ? 'open' : ''}>
           {links.map((l) => (
-            <li key={l}><a href={'#' + l} onClick={() => setMenu(false)}>{l}</a></li>
+            <li key={l}>
+              <a href={'#' + l} onClick={() => setMenu(false)}>
+                {l}
+              </a>
+            </li>
           ))}
         </ul>
       </nav>
@@ -404,8 +440,12 @@ export default function App() {
             I build GenAI products that turn fragmented enterprise knowledge into intelligent workflows, faster decisions, and measurable business impact.
           </p>
           <div className="cta">
-            <a className="btn" href={LINKEDIN} target="_blank" rel="noreferrer">Connect with me</a>
-            <a className="btn ghost" href="#experience">View my work</a>
+            <a className="btn" href={LINKEDIN} target="_blank" rel="noreferrer">
+              Connect with me
+            </a>
+            <a className="btn ghost" href="#experience">
+              View my work
+            </a>
           </div>
         </div>
 
@@ -504,8 +544,12 @@ export default function App() {
           <div className="contact reveal">
             <p>Open to conversations about GenAI, agentic systems, and building enterprise AI that creates real business value.</p>
             <div className="cta">
-              <a className="btn" href={LINKEDIN} target="_blank" rel="noreferrer">Connect on LinkedIn</a>
-              <a className="btn ghost" href={'mailto:' + EMAIL}>Email me</a>
+              <a className="btn" href={LINKEDIN} target="_blank" rel="noreferrer">
+                Connect on LinkedIn
+              </a>
+              <a className="btn ghost" href={'mailto:' + EMAIL}>
+                Email me
+              </a>
             </div>
           </div>
         </Section>
