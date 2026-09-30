@@ -229,55 +229,36 @@ function Certifications() {
   const shown = certs.filter((c) => filter === 'all' || c.type === filter)
 
   return (
-    <Section id="certifications" title="Certifications">
-      <div className="tabs reveal">
-        {['all', 'license', 'udemy'].map((t) => (
-          <button key={t} className={filter === t ? 'on' : ''} onClick={() => setFilter(t)}>
-            {t === 'all' ? 'All' : t === 'license' ? 'Licenses' : 'Udemy'}
-          </button>
-        ))}
-        {admin && (
-          <button className="add" onClick={() => setOpen(!open)}>
-            {open ? '✕ Close' : '＋ Add certification'}
-          </button>
-        )}
-      </div>
+  <section className="section cert-section" id="certifications">
+    <h2 className="reveal"><span>Certifications</span></h2>
 
-      {admin && open && (
-        <form className="form card" onSubmit={add}>
-          <input required placeholder="Certification title" value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} />
-          <input required placeholder="Issuer (e.g. Udemy, Microsoft)" value={f.issuer} onChange={(e) => setF({ ...f, issuer: e.target.value })} />
-          <select value={f.type} onChange={(e) => setF({ ...f, type: e.target.value })}>
-            <option value="udemy">Udemy certificate</option>
-            <option value="license">License certification</option>
-          </select>
-          <input type="url" placeholder="Credential URL (optional)" value={f.link} onChange={(e) => setF({ ...f, link: e.target.value })} />
-          <label className="file">
-            {file ? file.name : 'Upload certificate (PDF / image, max 3 MB)'}
-            <input type="file" accept="image/*,application/pdf" hidden onChange={(e) => setFile(e.target.files[0])} />
-          </label>
-          {err && <p className="err">{err}</p>}
-          <button className="btn" disabled={busy}>{busy ? 'Uploading…' : 'Save certification'}</button>
-        </form>
-      )}
+    <div className="cert-tabs">
+      <button className="tab on" type="button">All</button>
+      <button className="tab" type="button">Licenses</button>
+      <button className="tab" type="button">Udemy</button>
+    </div>
 
-      <div className="grid3">
-        {shown.map((c) => (
-          <Tilt key={c.id} className="cert pop">
-            {c.isImage && <img src={c.fileUrl} alt={c.title} loading="lazy" />}
-            <span className={`pill ${c.type}`}>{c.type === 'license' ? 'License' : 'Udemy'}</span>
-            <h3>{c.title}</h3>
-            <p>{c.issuer}</p>
-            <div className="row">
-              {c.fileUrl && <a href={c.fileUrl} target="_blank" rel="noreferrer">View certificate ↗</a>}
-              {c.link && <a href={c.link} target="_blank" rel="noreferrer">Credential ↗</a>}
+    <div className="cert-grid">
+      {certs.map((cert) => (
+        <article className="cert-card" key={cert.id}>
+          <div className="cert-thumb">
+            <img src={cert.image} alt={cert.name} />
+          </div>
+
+          <div className="cert-body">
+            <span className="cert-type">{cert.type}</span>
+            <h3>{cert.name}</h3>
+            <p>{cert.issuer}</p>
+
+            <div className="cert-links">
+              <a href={cert.link}>View certificate</a>
+              <a href={cert.link}>Credential</a>
             </div>
-            {admin && <button className="del" onClick={() => remove(c.id)} aria-label="Remove">🗑</button>}
-          </Tilt>
-        ))}
-        {!shown.length && <p className="muted">No certifications added yet.</p>}
-      </div>
-    </Section>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
   )
 }
 
