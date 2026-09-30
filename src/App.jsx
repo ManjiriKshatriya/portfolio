@@ -229,36 +229,46 @@ function Certifications() {
   const shown = certs.filter((c) => filter === 'all' || c.type === filter)
 
   return (
-  <section className="section cert-section" id="certifications">
-    <h2 className="reveal"><span>Certifications</span></h2>
+    <section className="section cert-section" id="certifications">
+      <h2 className="reveal"><span>Certifications</span></h2>
 
-    <div className="cert-tabs">
-      <button className="tab on" type="button">All</button>
-      <button className="tab" type="button">Licenses</button>
-      <button className="tab" type="button">Udemy</button>
-    </div>
+      <div className="cert-tabs">
+        <button className={`tab ${filter === 'all' ? 'on' : ''}`} type="button" onClick={() => setFilter('all')}>All</button>
+        <button className={`tab ${filter === 'license' ? 'on' : ''}`} type="button" onClick={() => setFilter('license')}>Licenses</button>
+        <button className={`tab ${filter === 'udemy' ? 'on' : ''}`} type="button" onClick={() => setFilter('udemy')}>Udemy</button>
+      </div>
 
-    <div className="cert-grid">
-      {certs.map((cert) => (
-        <article className="cert-card" key={cert.id}>
-          <div className="cert-thumb">
-            <img src={cert.image} alt={cert.name} />
-          </div>
+      <div className="cert-grid">
+        {shown.map((cert) => {
+          const viewLink = cert.link || cert.viewUrl || cert.url || ''
+          const credentialLink = cert.credential || cert.credentialUrl || ''
+          const showCredential = Boolean(credentialLink) && credentialLink !== viewLink
 
-          <div className="cert-body">
-            <span className="cert-type">{cert.type}</span>
-            <h3>{cert.name}</h3>
-            <p>{cert.issuer}</p>
+          return (
+            <article className="cert-card" key={cert.id}>
+              <div className="cert-thumb">
+                <img src={cert.image || cert.fileUrl || 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80'} alt={cert.title || cert.name} />
+              </div>
 
-            <div className="cert-links">
-              <a href={cert.link}>View certificate</a>
-              <a href={cert.link}>Credential</a>
-            </div>
-          </div>
-        </article>
-      ))}
-    </div>
-  </section>
+              <div className="cert-body">
+                <span className="cert-type">{cert.type}</span>
+                <h3>{cert.title || cert.name}</h3>
+                <p>{cert.issuer}</p>
+
+                <div className="cert-links">
+                  {viewLink && (
+                    <a href={viewLink} target="_blank" rel="noreferrer">View certificate</a>
+                  )}
+                  {showCredential && (
+                    <a href={credentialLink} target="_blank" rel="noreferrer">Credential</a>
+                  )}
+                </div>
+              </div>
+            </article>
+          )
+        })}
+      </div>
+    </section>
   )
 }
 
