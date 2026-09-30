@@ -143,13 +143,14 @@ h1, h2, h3, h4, .logo { font-family: Sora, sans-serif; }
   bottom: -6px;
   width: 0;
   height: 2px;
-  border-radius: 99px;
   background: linear-gradient(90deg, var(--a), var(--b));
   transition: width 0.25s ease;
 }
 
-.nav li a:hover { color: var(--tx); }
-.nav li a:hover::after { width: 100%; }
+.nav li a:hover::after,
+.nav li a.active::after {
+  width: 100%;
+}
 
 .burger {
   display: none;
@@ -905,13 +906,21 @@ footer {
     padding: 0 5vw 18px;
     background: rgba(7, 11, 22, 0.96);
     border-bottom: 1px solid var(--bd);
-    max-height: 0;
-    overflow: hidden;
+    max-height: min(70vh, 520px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
     transition: max-height 0.35s ease;
   }
 
-  .nav ul.open { max-height: 420px; }
-  .nav li a { display: block; padding: 12px 0; }
+  .nav ul.open {
+    max-height: min(70vh, 520px);
+  }
+
+  .nav li a {
+    display: block;
+    padding: 12px 0;
+  }
 
   .hero {
     text-align: center;
