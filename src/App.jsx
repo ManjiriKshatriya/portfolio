@@ -84,11 +84,11 @@ const edu = [
 
 function useReveal() {
   useEffect(() => {
-    const io = new IntersectionObserver((es) => {
-      es.forEach((e) => {
-        if (e.isIntersecting) {
-          e.target.classList.add('in')
-          io.unobserve(e.target)
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in')
+          io.unobserve(entry.target)
         }
       })
     }, { threshold: 0.12 })
@@ -99,28 +99,32 @@ function useReveal() {
 }
 
 function Typing({ words }) {
-  const [i, setI] = useState(0)
-  const [n, setN] = useState(0)
-  const [del, setDel] = useState(false)
+  const [index, setIndex] = useState(0)
+  const [charIndex, setCharIndex] = useState(0)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
-    const word = words[i]
+    const word = words[index]
+
     const timeout = setTimeout(() => {
-      if (!del && n < word.length) setN(n + 1)
-      else if (!del) setDel(true)
-      else if (n > 0) setN(n - 1)
-      else {
-        setDel(false)
-        setI((i + 1) % words.length)
+      if (!deleting && charIndex < word.length) {
+        setCharIndex(charIndex + 1)
+      } else if (!deleting) {
+        setDeleting(true)
+      } else if (charIndex > 0) {
+        setCharIndex(charIndex - 1)
+      } else {
+        setDeleting(false)
+        setIndex((index + 1) % words.length)
       }
-    }, !del && n === word.length ? 1400 : del ? 35 : 70)
+    }, !deleting && charIndex === word.length ? 1400 : deleting ? 35 : 70)
 
     return () => clearTimeout(timeout)
-  }, [n, del, i, words])
+  }, [charIndex, deleting, index, words])
 
   return (
     <span className="typing">
-      {words[i].slice(0, n)}
+      {words[index].slice(0, charIndex)}
       <i />
     </span>
   )
@@ -137,7 +141,12 @@ function Tilt({ children, className = '' }) {
   }
 
   return (
-    <div ref={ref} className={`card ${className}`} onMouseMove={move} onMouseLeave={() => (ref.current.style.transform = '')}>
+    <div
+      ref={ref}
+      className={`card ${className}`}
+      onMouseMove={move}
+      onMouseLeave={() => (ref.current.style.transform = '')}
+    >
       {children}
     </div>
   )
@@ -145,7 +154,9 @@ function Tilt({ children, className = '' }) {
 
 const Section = ({ id, title, children }) => (
   <section id={id} className="section">
-    <h2 className="reveal"><span>{title}</span></h2>
+    <h2 className="reveal">
+      <span>{title}</span>
+    </h2>
     {children}
   </section>
 )
@@ -242,7 +253,9 @@ function Certifications() {
 
   return (
     <section className="section cert-section" id="certifications">
-      <h2 className="reveal"><span>Certifications</span></h2>
+      <h2 className="reveal">
+        <span>Certifications</span>
+      </h2>
 
       <div className="cert-toolbar">
         <div className="cert-tabs">
@@ -389,6 +402,9 @@ export default function App() {
   const [scrolled, setScrolled] = useState(false)
   const [admin, setAdmin] = useState(false)
 
+  const closeMenu = () => setMenu(false)
+  const toggleMenu = () => setMenu((v) => !v)
+
   useReveal()
 
   useEffect(() => {
@@ -402,6 +418,14 @@ export default function App() {
       .then((r) => r.json())
       .then((d) => setAdmin(!!d.admin))
       .catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 820) setMenu(false)
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
   }, [])
 
   const links = ['about', 'skills', 'experience', 'education', 'certifications', 'contact']
@@ -420,14 +444,20 @@ export default function App() {
           MK<b>.</b>
         </a>
 
-        <button className="burger" onClick={() => setMenu(!menu)} aria-label="Menu">
+        <button
+          type="button"
+          className="burger"
+          onClick={toggleMenu}
+          aria-label={menu ? 'Close menu' : 'Open menu'}
+          aria-expanded={menu}
+        >
           {menu ? '✕' : '☰'}
         </button>
 
         <ul className={menu ? 'open' : ''}>
           {links.map((l) => (
             <li key={l}>
-              <a href={'#' + l} onClick={() => setMenu(false)}>
+              <a href={'#' + l} onClick={closeMenu}>
                 {l}
               </a>
             </li>
