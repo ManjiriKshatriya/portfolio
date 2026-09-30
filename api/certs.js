@@ -15,9 +15,16 @@ export default async function handler(req, res) {
     if (!admin) return res.status(401).json({ error: 'Unauthorized' })
     const certs = await read()
     if (req.method === 'POST') {
-      const { title, issuer, type, link, fileName, fileType, fileData } = req.body || {}
+      const { title, issuer, type, link, credential, viewUrl, fileName, fileType, fileData } = req.body || {}
       if (!title || !issuer) return res.status(400).json({ error: 'Title and issuer required' })
-      const item = { id: Date.now().toString(36), title, issuer, type: type === 'license' ? 'license' : 'udemy', link: link || '' }
+      const item = {
+        id: Date.now().toString(36),
+        title,
+        issuer,
+        type: type === 'license' ? 'license' : 'udemy',
+        link: link || viewUrl || '',
+        credential: credential || '',
+      }
       if (fileData) {
         const safe = String(fileName || 'file').replace(/[^\w.-]/g, '_')
         const b = await put(`certs/${item.id}-${safe}`, Buffer.from(fileData, 'base64'), { access: 'public', contentType: fileType, addRandomSuffix: false })

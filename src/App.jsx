@@ -165,7 +165,7 @@ function Certifications() {
   const [busy, setBusy] = useState(false)
   const [open, setOpen] = useState(false)
   const [filter, setFilter] = useState('all')
-  const [f, setF] = useState({ title: '', issuer: '', type: 'udemy', link: '' })
+  const [f, setF] = useState({ title: '', issuer: '', type: 'udemy', link: '', credential: '' })
   const [file, setFile] = useState(null)
 
   const load = () =>
@@ -214,7 +214,7 @@ function Certifications() {
     if (!r.ok) return setErr(d.error || 'Failed')
 
     setCerts(d.certs)
-    setF({ title: '', issuer: '', type: 'udemy', link: '' })
+    setF({ title: '', issuer: '', type: 'udemy', link: '', credential: '' })
     setFile(null)
     setOpen(false)
   }
@@ -232,11 +232,34 @@ function Certifications() {
     <section className="section cert-section" id="certifications">
       <h2 className="reveal"><span>Certifications</span></h2>
 
-      <div className="cert-tabs">
-        <button className={`tab ${filter === 'all' ? 'on' : ''}`} type="button" onClick={() => setFilter('all')}>All</button>
-        <button className={`tab ${filter === 'license' ? 'on' : ''}`} type="button" onClick={() => setFilter('license')}>Licenses</button>
-        <button className={`tab ${filter === 'udemy' ? 'on' : ''}`} type="button" onClick={() => setFilter('udemy')}>Udemy</button>
+      <div className="cert-toolbar">
+        <div className="cert-tabs">
+          <button className={`tab ${filter === 'all' ? 'on' : ''}`} type="button" onClick={() => setFilter('all')}>All</button>
+          <button className={`tab ${filter === 'license' ? 'on' : ''}`} type="button" onClick={() => setFilter('license')}>Licenses</button>
+          <button className={`tab ${filter === 'udemy' ? 'on' : ''}`} type="button" onClick={() => setFilter('udemy')}>Udemy</button>
+        </div>
+        {admin && (
+          <button className="tab add" type="button" onClick={() => setOpen((v) => !v)}>
+            {open ? 'Close' : '+ Add'}
+          </button>
+        )}
       </div>
+
+      {admin && open && (
+        <form className="form" onSubmit={add}>
+          <input value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} placeholder="Certificate title" />
+          <input value={f.issuer} onChange={(e) => setF({ ...f, issuer: e.target.value })} placeholder="Issuer" />
+          <select value={f.type} onChange={(e) => setF({ ...f, type: e.target.value })}>
+            <option value="udemy">Udemy</option>
+            <option value="license">License</option>
+          </select>
+          <input value={f.link} onChange={(e) => setF({ ...f, link: e.target.value })} placeholder="Certificate URL" />
+          <input value={f.credential} onChange={(e) => setF({ ...f, credential: e.target.value })} placeholder="Credential URL (optional)" />
+          <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+          {err && <p className="err">{err}</p>}
+          <button className="btn" type="submit" disabled={busy}>{busy ? 'Saving...' : 'Save certificate'}</button>
+        </form>
+      )}
 
       <div className="cert-grid">
         {shown.map((cert) => {
@@ -264,6 +287,10 @@ function Certifications() {
                   )}
                 </div>
               </div>
+
+              {admin && (
+                <button className="del" type="button" onClick={() => remove(cert.id)}>Remove</button>
+              )}
             </article>
           )
         })}
